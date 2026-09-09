@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  applications JobApplication[]
+  skills       UserSkill[]
+}
+
+model Company {
+  id        String   @id @default(uuid())
+  name      String
+  website   String?
+  industry  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  applications JobApplication[]
+
+  @@unique([name])
+}
+
+model JobApplication {
+  id             String            @id @default(uuid())
+  userId         String
+  companyId      String
+
+  title          String
+  jobUrl         String?
+  location       String?
+  salary         String?
+  source         String?
+  status         ApplicationStatus @default(SAVED)
+  dateApplied    DateTime?
+  jobDescription String?
+  notes          String?
+
+  recruiterName  String?
+  recruiterEmail String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company       Company         @relation(fields: [companyId], references: [id])
+  statusHistory StatusHistory[]
+  aiAnalysis    JobAnalysis?
+
+  @@index([userId])
+  @@index([status])
+  @@index([dateApplied])
+}
+
+model StatusHistory {
+  id            String            @id @default(uuid())
+  applicationId String
+  status        ApplicationStatus
+  createdAt     DateTime          @default(now())
+
+  application JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+}
+
+model UserSkill {
+  id          String  @id @default(uuid())
+  userId      String
+  skill       String
+  proficiency String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, skill])
+}
+
+model JobAnalysis {
+  id            String @id @default(uuid())
+  applicationId String @unique
+
+  summary          String?
+  requiredSkills   Json?
+  preferredSkills  Json?
+  responsibilities Json?
+  education        String?
+  experience       String?
+  keywords         Json?
+
+  matchedSkills  Json?
+  missingSkills  Json?
+  matchScore     Int?
+  recommendation String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  application JobApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+}
+
+enum ApplicationStatus {
+  SAVED
+  APPLIED
+  OA
+  PHONE_SCREEN
+  INTERVIEW
+  FINAL_ROUND
+  OFFER
+  REJECTED
+  WITHDRAWN
+}
