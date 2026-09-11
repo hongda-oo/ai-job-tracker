@@ -132,8 +132,16 @@ export function ApplicationsPage() {
               <tbody className="divide-y divide-gray-100">
                 {applications.map((app) => (
                   <tr key={app.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{app.company.name}</td>
-                    <td className="px-4 py-3 text-sm text-gray-700">{app.title}</td>
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                      <Link to={`/applications/${app.id}`} className="hover:text-indigo-600">
+                        {app.company.name}
+                      </Link>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      <Link to={`/applications/${app.id}`} className="hover:text-indigo-600">
+                        {app.title}
+                      </Link>
+                    </td>
                     <td className="px-4 py-3 text-sm text-gray-500">{app.location ?? '—'}</td>
                     <td className="px-4 py-3">
                       <StatusBadge status={app.status} />

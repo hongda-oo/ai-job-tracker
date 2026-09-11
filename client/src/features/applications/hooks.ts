@@ -3,11 +3,14 @@ import {
   createApplicationRequest,
   deleteApplicationRequest,
   getApplicationRequest,
+  getStatusHistoryRequest,
   listApplicationsRequest,
   updateApplicationRequest,
+  updateApplicationStatusRequest,
   type ListApplicationsParams,
 } from './api';
 import type { ApplicationFormValues } from '@/schemas/application';
+import type { ApplicationStatus } from '@/types/application';
 
 const applicationsKey = (params?: ListApplicationsParams) => ['applications', params] as const;
 
@@ -55,5 +58,25 @@ export function useDeleteApplication() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applications'] });
     },
+  });
+}
+
+export function useUpdateApplicationStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, status }: { id: string; status: ApplicationStatus }) =>
+      updateApplicationStatusRequest(id, status),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['applications'] });
+      queryClient.invalidateQueries({ queryKey: ['statusHistory', variables.id] });
+    },
+  });
+}
+
+export function useStatusHistory(id: string | undefined) {
+  return useQuery({
+    queryKey: ['statusHistory', id],
+    queryFn: () => getStatusHistoryRequest(id!),
+    enabled: !!id,
   });
 }
