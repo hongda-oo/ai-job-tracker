@@ -7,7 +7,9 @@ import {
   listApplications,
   updateApplication,
 } from '../../repositories/application.repository.js';
+import { listStatusHistory } from '../../repositories/statusHistory.repository.js';
 import type {
+  ApplicationStatusValue,
   CreateApplicationInput,
   ListApplicationsQuery,
   UpdateApplicationInput,
@@ -66,4 +68,25 @@ export async function updateApplicationForUser(
 export async function deleteApplicationForUser(userId: string, id: string) {
   await getOwnedApplicationOrThrow(userId, id);
   await deleteApplication(id);
+}
+
+export async function updateApplicationStatusForUser(
+  userId: string,
+  id: string,
+  status: ApplicationStatusValue,
+) {
+  const existing = await getOwnedApplicationOrThrow(userId, id);
+  if (status === existing.status) {
+    return existing;
+  }
+
+  return updateApplication(id, {
+    status,
+    statusHistory: { create: { status } },
+  });
+}
+
+export async function getStatusHistoryForUser(userId: string, id: string) {
+  await getOwnedApplicationOrThrow(userId, id);
+  return listStatusHistory(id);
 }

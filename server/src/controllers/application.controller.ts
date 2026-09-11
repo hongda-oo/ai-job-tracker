@@ -3,8 +3,10 @@ import {
   createApplicationForUser,
   deleteApplicationForUser,
   getOwnedApplicationOrThrow,
+  getStatusHistoryForUser,
   listApplicationsForUser,
   updateApplicationForUser,
+  updateApplicationStatusForUser,
 } from '../services/applications/application.service.js';
 import type { ListApplicationsQuery } from '../schemas/application.schema.js';
 
@@ -45,4 +47,18 @@ export async function updateApplication(req: Request, res: Response) {
 export async function deleteApplicationHandler(req: Request, res: Response) {
   await deleteApplicationForUser(req.userId!, req.params.id!);
   res.json({ success: true, data: {} });
+}
+
+export async function updateApplicationStatus(req: Request, res: Response) {
+  const application = await updateApplicationStatusForUser(
+    req.userId!,
+    req.params.id!,
+    req.body.status,
+  );
+  res.json({ success: true, data: { application } });
+}
+
+export async function getStatusHistory(req: Request, res: Response) {
+  const statusHistory = await getStatusHistoryForUser(req.userId!, req.params.id!);
+  res.json({ success: true, data: { statusHistory } });
 }

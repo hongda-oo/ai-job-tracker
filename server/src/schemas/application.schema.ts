@@ -14,6 +14,8 @@ export const applicationStatusValues = [
 
 export const applicationStatusSchema = z.enum(applicationStatusValues);
 
+export type ApplicationStatusValue = (typeof applicationStatusValues)[number];
+
 const optionalTrimmedString = (max: number) =>
   z
     .string()
