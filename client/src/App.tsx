@@ -4,6 +4,7 @@ import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { ApplicationsPage } from '@/pages/ApplicationsPage';
 import { ApplicationDetailPage } from '@/pages/ApplicationDetailPage';
+import { SkillsPage } from '@/pages/SkillsPage';
 import { ProtectedRoute } from '@/routes/ProtectedRoute';
 
 // Recharts (used only by the dashboard) pulls in a sizeable D3 dependency
@@ -32,6 +33,7 @@ function App() {
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/applications" element={<ApplicationsPage />} />
           <Route path="/applications/:id" element={<ApplicationDetailPage />} />
+          <Route path="/skills" element={<SkillsPage />} />
         </Route>
 
         <Route path="/" element={<Navigate to="/dashboard" replace />} />

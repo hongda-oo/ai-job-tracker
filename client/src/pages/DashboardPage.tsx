@@ -34,6 +34,9 @@ export function DashboardPage() {
           </div>
           <div className="flex gap-2">
             <Button onClick={() => setAddOpen(true)}>+ Add Application</Button>
+            <Link to="/skills">
+              <Button variant="secondary">Skills</Button>
+            </Link>
             <Button variant="secondary" onClick={() => logout()}>
               Sign out
             </Button>
